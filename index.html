@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="data:,">
+  <title>Bilfen AD'S UP — Ücretsiz Gerçek 3B</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: Inter, system-ui, -apple-system, sans-serif; background: linear-gradient(135deg,#071a2b,#102b45); color: #f3f7fb; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 2rem; }
+    h1 { margin-bottom: 0.5rem; font-size: 1.8rem; }
+    .subtitle { color: #b6c8d8; margin-bottom: 1rem; max-width: 720px; text-align:center; line-height:1.5; }
+    .notice { background:#fbbf241a; border:1px solid #fbbf2466; color:#fde68a; padding:.75rem 1rem; border-radius:10px; max-width:720px; margin-bottom:1.25rem; font-size:.88rem; }
+    #drop-zone { width: 512px; height: 512px; border: 2px dashed #555; border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: border-color 0.2s; position: relative; overflow: hidden; }
+    #drop-zone:hover, #drop-zone.dragover { border-color: #6c63ff; }
+    #drop-zone img { max-width: 100%; max-height: 100%; object-fit: contain; }
+    #drop-zone .placeholder { text-align: center; color: #666; }
+    #status { margin-top: 1rem; font-size: 0.9rem; color: #aaa; min-height: 1.5em; }
+    #progress-bar { width: 512px; height: 4px; background: #333; border-radius: 2px; margin-top: 0.5rem; overflow: hidden; }
+    #progress-fill { height: 100%; background: #6c63ff; width: 0%; transition: width 0.3s; }
+    .controls { margin-top: 1rem; display: flex; gap: 1rem; }
+    button { background: #6c63ff; color: white; border: none; padding: 0.6rem 1.5rem; border-radius: 6px; cursor: pointer; font-size: 0.9rem; }
+    button:hover { background: #5a52d5; }
+    button:disabled { background: #444; cursor: not-allowed; }
+    #output { margin-top: 2rem; width:min(760px,96vw); display:none; }
+    model-viewer { width:100%; height:520px; background:#08111f; border-radius:14px; }
+    .output-controls { display:flex; gap:.75rem; justify-content:center; flex-wrap:wrap; margin-top:1rem; }
+    canvas { border-radius: 8px; }
+  </style>
+  <script type="module" crossorigin src="./assets/index-LQWf2wK0.js"></script>
+</head>
+<body>
+  <h1>Bilfen AD'S UP · Gerçek 3B</h1>
+  <p class="subtitle">Tek bir görselden ön, yan ve arka yüzleri olan dokulu bir 3B model üretir. İşlem tamamen cihazınızın ekran kartında yapılır; görsel hiçbir sunucuya yüklenmez.</p>
+  <div class="notice">İlk kullanımda yaklaşık 2,1 GB açık model indirilir ve tarayıcı önbelleğine alınır. Güncel Chrome/Edge ve WebGPU destekli, en az 8 GB belleğe sahip bilgisayar önerilir.</div>
+
+  <div id="drop-zone">
+    <div class="placeholder">
+      <p>Görseli buraya sürükleyin</p>
+      <p style="font-size: 0.8rem; margin-top: 0.5rem;">veya seçmek için tıklayın</p>
+    </div>
+  </div>
+
+  <div id="progress-bar"><div id="progress-fill"></div></div>
+  <div id="status">WebGPU denetleniyor…</div>
+
+  <div class="controls">
+    <button id="demo-btn" disabled>Örnek sandalye</button>
+    <button id="run-btn" disabled>Gerçek 3B Model Üret</button>
+  </div>
+
+  <div id="output">
+    <model-viewer id="model-viewer" camera-controls auto-rotate shadow-intensity="1" environment-image="neutral" interaction-prompt="none"></model-viewer>
+    <div class="output-controls">
+      <button id="download-btn" disabled>GLB indir</button>
+      <button id="video-btn" disabled>10 sn video kaydet</button>
+    </div>
+  </div>
+
+  <input type="file" id="file-input" accept="image/*" style="display: none;">
+
+  <script type="module" src="https://cdn.jsdelivr.net/npm/@google/model-viewer@4.1.0/dist/model-viewer.min.js"></script>
+</body>
+</html>
