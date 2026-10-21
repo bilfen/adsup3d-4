@@ -1,64 +1,231 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" href="data:,">
-  <title>Bilfen AD'S UP — Ücretsiz Gerçek 3B</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: Inter, system-ui, -apple-system, sans-serif; background: linear-gradient(135deg,#071a2b,#102b45); color: #f3f7fb; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 2rem; }
-    h1 { margin-bottom: 0.5rem; font-size: 1.8rem; }
-    .subtitle { color: #b6c8d8; margin-bottom: 1rem; max-width: 720px; text-align:center; line-height:1.5; }
-    .notice { background:#fbbf241a; border:1px solid #fbbf2466; color:#fde68a; padding:.75rem 1rem; border-radius:10px; max-width:720px; margin-bottom:1.25rem; font-size:.88rem; }
-    #drop-zone { width: 512px; height: 512px; border: 2px dashed #555; border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: border-color 0.2s; position: relative; overflow: hidden; }
-    #drop-zone:hover, #drop-zone.dragover { border-color: #6c63ff; }
-    #drop-zone img { max-width: 100%; max-height: 100%; object-fit: contain; }
-    #drop-zone .placeholder { text-align: center; color: #666; }
-    #status { margin-top: 1rem; font-size: 0.9rem; color: #aaa; min-height: 1.5em; }
-    #progress-bar { width: 512px; height: 4px; background: #333; border-radius: 2px; margin-top: 0.5rem; overflow: hidden; }
-    #progress-fill { height: 100%; background: #6c63ff; width: 0%; transition: width 0.3s; }
-    .controls { margin-top: 1rem; display: flex; gap: 1rem; }
-    button { background: #6c63ff; color: white; border: none; padding: 0.6rem 1.5rem; border-radius: 6px; cursor: pointer; font-size: 0.9rem; }
-    button:hover { background: #5a52d5; }
-    button:disabled { background: #444; cursor: not-allowed; }
-    #output { margin-top: 2rem; width:min(760px,96vw); display:none; }
-    model-viewer { width:100%; height:520px; background:#08111f; border-radius:14px; }
-    .output-controls { display:flex; gap:.75rem; justify-content:center; flex-wrap:wrap; margin-top:1rem; }
-    canvas { border-radius: 8px; }
-  </style>
-  <script type="module" crossorigin src="./assets/index-LQWf2wK0.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bilfen AD'S UP — Görselden 3D Animasyon Videosuna</title>
+<meta name="description" content="Görselini yükle, SF3D ile tarayıcında 3D modele dönüşsün; dönen modeli GLB veya video olarak indir.">
+<link rel="icon" href="assets/banner.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --red:#e63946; --amber:#f4a417; --green:#2a9d53; --blue:#1274bf; --magenta:#b30f76;
+    --ink:#17202a; --muted:#5f6b7a; --line:#e6e9ee; --card:#ffffff; --bg:#f4f5f7;
+    --shadow:0 1px 2px rgba(23,32,42,.05), 0 8px 24px -12px rgba(23,32,42,.12);
+    --radius:16px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;font-family:"Inter","Segoe UI",system-ui,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+
+  /* Üst çubuk */
+  .topbar{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:50}
+  .topbar .inner{max-width:1120px;margin:0 auto;padding:10px 24px;display:flex;align-items:center;gap:12px}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.02em}
+  .brand .dot{width:10px;height:10px;border-radius:999px;background:linear-gradient(135deg,var(--red),var(--amber),var(--green),var(--blue),var(--magenta))}
+  .topbar nav{margin-left:auto;display:flex;gap:18px;font-size:14px}
+  .topbar nav a{color:var(--muted);text-decoration:none;font-weight:500}
+  .topbar nav a:hover{color:var(--ink)}
+  .topbar .cta{background:var(--ink);color:#fff;padding:8px 16px;border-radius:999px;font-size:13px;font-weight:600;text-decoration:none}
+  .topbar .cta:hover{opacity:.9}
+
+  /* Hero: banner ana görsel */
+  .hero{max-width:1120px;margin:24px auto 0;padding:0 24px}
+  .heroCard{background:#fff;border:1px solid var(--line);border-radius:24px;overflow:hidden;box-shadow:var(--shadow)}
+  .heroCard img{width:100%;display:block;aspect-ratio:3406/1252;object-fit:cover}
+  .heroBody{padding:28px 32px 30px;display:flex;gap:28px;align-items:flex-end;flex-wrap:wrap}
+  .heroBody h1{margin:0;font-size:clamp(22px,3.2vw,34px);font-weight:800;letter-spacing:-.02em;line-height:1.15}
+  .heroBody h1 .grad{background:linear-gradient(90deg,var(--red),var(--amber),var(--green),var(--blue),var(--magenta));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .heroBody p{margin:10px 0 0;color:var(--muted);font-size:15.5px;max-width:640px;line-height:1.6}
+  .badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+  .badge{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;background:#f1f5f9;color:#334155;font-size:12.5px;font-weight:600}
+  .badge.b-blue{background:#e8f4fd;color:#0b5d95}
+  .badge.b-green{background:#e9f7ee;color:#1d7a41}
+  .badge.b-amber{background:#fdf3e3;color:#9a6a0a}
+
+  main{max-width:1120px;margin:0 auto;padding:26px 24px 40px}
+
+  /* Uyarı şeridi */
+  .notice{background:#fdf3e3;border:1px solid #f4c77a;color:#7a5306;padding:12px 16px;border-radius:12px;margin:0 0 22px;font-size:13.5px;line-height:1.55}
+
+  /* Adım şeridi */
+  .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:0 0 22px}
+  @media(max-width:860px){.steps{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:520px){.steps{grid-template-columns:1fr}}
+  .step{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+  .step::before{content:"";position:absolute;inset:0 auto 0 0;width:4px}
+  .step:nth-child(1)::before{background:var(--red)} .step:nth-child(2)::before{background:var(--amber)}
+  .step:nth-child(3)::before{background:var(--green)} .step:nth-child(4)::before{background:var(--blue)}
+  .step .n{font-size:11px;font-weight:800;letter-spacing:.12em;color:var(--muted);text-transform:uppercase}
+  .step b{display:block;margin:4px 0 2px;font-size:15px}
+  .step span{color:var(--muted);font-size:13px;line-height:1.5;display:block}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:24px;margin-bottom:20px;box-shadow:var(--shadow)}
+  .card>h2{margin:0 0 6px;font-size:18px;font-weight:700;letter-spacing:-.01em;display:flex;align-items:center;gap:10px}
+  .card>.sub{margin:0 0 16px;color:var(--muted);font-size:13.5px}
+  .num{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:8px;background:var(--ink);color:#fff;font-size:13px;font-weight:700}
+
+  /* Yükleme alanı (JS #drop-zone'a bağlı; sınıf olarak .dragover ekler) */
+  .drop{position:relative;border:2.5px dashed #b9c5d4;border-radius:20px;padding:56px 32px;text-align:center;cursor:pointer;transition:.18s;background:linear-gradient(180deg,#f8fafc,#f1f5f9);min-height:230px;display:flex;flex-direction:column;justify-content:center;align-items:center}
+  .drop:hover,.drop.dragover{border-color:var(--blue);background:linear-gradient(180deg,#f0f7fe,#e8f2fd);box-shadow:inset 0 0 0 4px rgba(18,116,191,.08)}
+  .drop .em{font-size:56px;margin-bottom:14px;filter:drop-shadow(0 6px 12px rgba(18,116,191,.18))}
+  .drop b{font-size:24px;font-weight:700;letter-spacing:-.02em}
+  .drop .hint{color:#334155;font-size:15.5px;font-weight:500;background:#e8f4fd;padding:10px 22px;border-radius:999px;margin-top:14px}
+  @media(max-width:640px){.drop{padding:40px 20px;min-height:190px}.drop b{font-size:20px}.drop .em{font-size:44px}.drop .hint{font-size:14px;padding:8px 16px}}
+  #drop-zone img{max-width:300px;max-height:220px;object-fit:contain;border-radius:12px;box-shadow:var(--shadow)}
+
+  button{font:inherit;border:0;border-radius:999px;padding:12px 24px;cursor:pointer;font-weight:600;transition:.15s}
+  .btn-primary{background:linear-gradient(90deg,var(--red),var(--amber),var(--green),var(--blue),var(--magenta));color:#fff;box-shadow:0 6px 18px -6px rgba(18,116,191,.4)}
+  .btn-primary:hover{filter:brightness(1.07)}
+  .btn-primary:disabled,.btn-ghost:disabled{opacity:.45;cursor:not-allowed}
+  .btn-ghost{background:#fff;border:1px solid var(--line);color:var(--ink)}
+  .btn-ghost:hover{background:#f6f8fa;border-color:#d6dce4}
+  .btn-ghost:disabled:hover{background:#fff}
+  .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+  .actions button{flex:1 1 220px}
+
+  .status{margin-top:14px;font-size:14px;color:var(--muted);min-height:1.5em}
+  .bar{height:8px;background:#e9edf2;border-radius:999px;overflow:hidden;margin-top:10px}
+  #progress-fill{display:block;height:100%;width:0%;background:linear-gradient(90deg,var(--blue),var(--magenta));transition:width .4s;border-radius:999px}
+
+  /* 3D bölüm (JS #output'u display:block yapar) */
+  #secViz{display:none}
+  #secViz:has(#output[style*="block"]){display:block}
+  #output{display:none}
+  .stageWrap{position:relative;width:100%}
+  model-viewer{width:100%;height:480px;background:radial-gradient(1200px 500px at 50% -10%,#1c2940,#0f172a);border-radius:14px;display:block;box-shadow:inset 0 0 0 1px rgba(255,255,255,.06)}
+  .stageLogo{position:absolute;top:14px;right:14px;background:rgba(255,255,255,.88);padding:7px 11px;border-radius:10px;pointer-events:none;box-shadow:0 2px 10px rgba(0,0,0,.22);display:flex;align-items:center}
+  .stageLogo img{width:clamp(80px,14vw,110px);height:auto;display:block;opacity:.92}
+  .output-controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+  .output-controls button{flex:1 1 200px}
+  .note{display:block;margin-top:12px;font-size:12.5px;color:var(--muted);line-height:1.55}
+
+  /* Bilgi bölümü */
+  .info{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  .infoItem{display:flex;gap:12px}
+  .infoItem .ic{flex:0 0 auto;width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px}
+  .infoItem:nth-child(1) .ic{background:#e9f7ee}
+  .infoItem:nth-child(2) .ic{background:#e8f4fd}
+  .infoItem:nth-child(3) .ic{background:#fdf3e3}
+  .infoItem:nth-child(4) .ic{background:#fdeef3}
+  .infoItem b{display:block;font-size:14.5px;margin-bottom:3px}
+  .infoItem p{margin:0;font-size:13px;color:var(--muted);line-height:1.55}
+  @media(max-width:860px){
+    .info{grid-template-columns:1fr}
+    .topbar nav a:not(.cta){display:none}
+    main{padding:20px 14px 40px}
+    .hero{padding:0 14px}
+    .heroBody{padding:20px 20px 24px}
+    model-viewer{height:360px}
+  }
+  @media(max-width:480px){
+    button{width:100%}
+    .actions button,.output-controls button{width:100%}
+  }
+
+  footer{border-top:1px solid var(--line);background:#fff}
+  .footerIn{max-width:1120px;margin:0 auto;padding:22px 24px;display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-size:13px;color:var(--muted)}
+  .footerIn .dot{width:9px;height:9px;border-radius:999px;background:linear-gradient(135deg,var(--red),var(--amber),var(--green),var(--blue),var(--magenta))}
+  .footerIn .right{margin-left:auto}
+</style>
 </head>
 <body>
-  <h1>Bilfen AD'S UP · Gerçek 3B</h1>
-  <p class="subtitle">Tek bir görselden ön, yan ve arka yüzleri olan dokulu bir 3B model üretir. İşlem tamamen cihazınızın ekran kartında yapılır; görsel hiçbir sunucuya yüklenmez.</p>
-  <div class="notice">İlk kullanımda yaklaşık 2,1 GB açık model indirilir ve tarayıcı önbelleğine alınır. Güncel Chrome/Edge ve WebGPU destekli, en az 8 GB belleğe sahip bilgisayar önerilir.</div>
 
-  <div id="drop-zone">
-    <div class="placeholder">
-      <p>Görseli buraya sürükleyin</p>
-      <p style="font-size: 0.8rem; margin-top: 0.5rem;">veya seçmek için tıklayın</p>
+<div class="topbar">
+  <div class="inner">
+    <div class="brand"><span class="dot"></span> BILFEN · AD'S UP</div>
+    <nav>
+      <a href="#yukle">Görsel Yükle</a>
+      <a href="#viz">3D İzle</a>
+      <a href="#bilgi">Nasıl Çalışır?</a>
+      <a class="cta" href="#yukle">Başla →</a>
+    </nav>
+  </div>
+</div>
+
+<div class="hero">
+  <div class="heroCard">
+    <img src="assets/banner.jpg" alt="Bilfen AD'S UP">
+    <div class="heroBody">
+      <div>
+        <h1>Görselden <span class="grad">3D Animasyon Videosuna</span></h1>
+        <p>Çizimini veya fotoğrafını yükle; SF3D yapay zekâsı görseli dokulu bir 3D modele dönüştürsün. Modeli tarayıcında döndürerek izle, tek tuşla .glb ya da video olarak indir.</p>
+        <div class="badges">
+          <span class="badge b-blue">🧠 SF3D AI</span>
+          <span class="badge b-green">🔒 Tamamen tarayıcında</span>
+          <span class="badge b-amber">⚡ WebGPU ile yerel işlem</span>
+          <span class="badge">🆓 Ücretsiz · Kurulum yok</span>
+        </div>
+      </div>
     </div>
   </div>
+</div>
 
-  <div id="progress-bar"><div id="progress-fill"></div></div>
-  <div id="status">WebGPU denetleniyor…</div>
-
-  <div class="controls">
-    <button id="demo-btn" disabled>Örnek sandalye</button>
-    <button id="run-btn" disabled>Gerçek 3B Model Üret</button>
+<main>
+  <div class="steps">
+    <div class="step"><span class="n">Adım 1</span><b>Görsel yükle</b><span>Nesne, oyuncak, karakter fotoğrafı veya kendi çizimin</span></div>
+    <div class="step"><span class="n">Adım 2</span><b>3D model üret</b><span>SF3D görseli dokulu bir 3D nesneye dönüştürür</span></div>
+    <div class="step"><span class="n">Adım 3</span><b>Canlı izle</b><span>Model tarayıcında döner; fareyle de çevirebilirsin</span></div>
+    <div class="step"><span class="n">Adım 4</span><b>İndir</b><span>Modeli .glb dosyası ya da 10 saniyelik video olarak kaydet</span></div>
   </div>
 
-  <div id="output">
-    <model-viewer id="model-viewer" camera-controls auto-rotate shadow-intensity="1" environment-image="neutral" interaction-prompt="none"></model-viewer>
-    <div class="output-controls">
-      <button id="download-btn" disabled>GLB indir</button>
-      <button id="video-btn" disabled>10 sn video kaydet</button>
+  <div class="notice">İlk kullanımda yaklaşık 2,1 GB açık model indirilir ve tarayıcı önbelleğine alınır. Güncel Chrome/Edge ve WebGPU destekli, en az 8 GB belleğe sahip bir bilgisayar önerilir.</div>
+
+  <section class="card" id="yukle">
+    <h2><span class="num">1</span> Görsel yükle</h2>
+    <p class="sub">Sade veya düz arka planlı, tek nesne fotoğrafları en iyi sonucu verir.</p>
+    <div class="drop" id="drop-zone">
+      <div class="em">🖼️</div>
+      <div><b>Görseli buraya sürükle</b></div>
+      <div class="hint">👆 Dokun veya tıkla · PNG / JPG / WebP</div>
     </div>
+    <input type="file" id="file-input" accept="image/*" hidden>
+    <div class="actions">
+      <button id="demo-btn" class="btn-ghost" disabled>Örnek sandalye</button>
+      <button id="run-btn" class="btn-primary" disabled>✨ Gerçek 3B Model Üret</button>
+    </div>
+    <div class="status" id="status">WebGPU denetleniyor…</div>
+    <div class="bar" id="progress-bar"><span id="progress-fill"></span></div>
+  </section>
+
+  <section class="card" id="secViz">
+    <h2 id="viz"><span class="num">2</span> Modelini izle ve indir</h2>
+    <p class="sub">Model otomatik döner; fareyle tutup kendin de çevirebilirsin.</p>
+    <div id="output">
+      <div class="stageWrap">
+        <model-viewer id="model-viewer" camera-controls auto-rotate shadow-intensity="1" environment-image="neutral" interaction-prompt="none"></model-viewer>
+        <div class="stageLogo"><img src="assets/logo.png" alt="Logo"></div>
+      </div>
+      <div class="output-controls">
+        <button id="download-btn" class="btn-ghost" disabled>⬇ GLB indir</button>
+        <button id="video-btn" class="btn-ghost" disabled>🎬 10 sn video kaydet</button>
+      </div>
+      <span class="note">💡 İpucu: modelin üzerinde fareyle basılı tutup sürükleyerek açıyı kendin seçebilirsin.</span>
+    </div>
+  </section>
+
+  <section class="card" id="bilgi">
+    <h2><span class="num">3</span> Nasıl çalışır?</h2>
+    <p class="sub">Hiçbir kurulum ve hesap gerektirmeden, tamamen cihazında:</p>
+    <div class="info">
+      <div class="infoItem"><div class="ic">📤</div><div><b>Görsel cihazında kalır</b><p>Yüklediğin görsel hiçbir sunucuya gönderilmez; üretim öğrencinin tarayıcısında WebGPU ile yapılır.</p></div></div>
+      <div class="infoItem"><div class="ic">🧊</div><div><b>3D model oluşur</b><p>SF3D, görseldeki nesneyi yorumlayarak dokulu bir .glb modeli üretir.</p></div></div>
+      <div class="infoItem"><div class="ic">🎬</div><div><b>Tarayıcında döner</b><p>Model cihazında canlı gösterilir; otomatik döner, sen de fareyle çevirebilirsin.</p></div></div>
+      <div class="infoItem"><div class="ic">⬇️</div><div><b>İndir</b><p>Modeli .glb olarak ya da dönen modelin 10 saniyelik videosunu bilgisayarına kaydet.</p></div></div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="footerIn">
+    <span class="dot"></span>
+    <span>Bilfen AD'S UP · Görselden 3D Videosuna Atölyesi</span>
+    <span class="right">Motor: SF3D WebGPU (lyonsno/sf3d-webgpu) · Ağırlıklar: BasinShapers/sf3d-webgpu-weights</span>
   </div>
+</footer>
 
-  <input type="file" id="file-input" accept="image/*" style="display: none;">
-
-  <script type="module" src="https://cdn.jsdelivr.net/npm/@google/model-viewer@4.1.0/dist/model-viewer.min.js"></script>
+<script type="module" crossorigin src="./assets/index-LQWf2wK0.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/@google/model-viewer@4.1.0/dist/model-viewer.min.js"></script>
 </body>
 </html>
